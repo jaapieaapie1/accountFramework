@@ -31,7 +31,7 @@ func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	jw, err := GenerateJwt(u.String(), i.JWTBase)
+	jw, err := GenerateJwt(u.Int64(), i.JWTBase)
 
 	if err != nil {
 		fmt.Println(err)
