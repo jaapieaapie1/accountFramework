@@ -34,7 +34,7 @@ func NewInstance(dbConn *sql.DB, encryptionBase string, nodeId int64) (*Instance
 func (i *Instance) PrepareDatabase() error {
 	_, err := i.DBConnection.Exec(`create table if not exists user
 (
-    id       int
+    id       BIGINT SIGNED
         primary key,
     username varchar(16) null,
     email    text        null,
