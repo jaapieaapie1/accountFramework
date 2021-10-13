@@ -3,7 +3,6 @@ package accountFramework
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
@@ -14,9 +13,9 @@ func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
 
-	u := uuid.New()
+	u := i.snowFlakeNode.Generate()
 
-	stmt, err := i.DBConnection.Prepare("INSERT INTO user (uuid, username, email, password) VALUES (?, ?, ?, ?);")
+	stmt, err := i.DBConnection.Prepare("INSERT INTO user (id, username, email, password) VALUES (?, ?, ?, ?);")
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
@@ -52,7 +51,7 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
 
-	stmt, err := i.DBConnection.Prepare("SELECT uuid, password FROM user WHERE username = ? OR password = ? LIMIT 1;")
+	stmt, err := i.DBConnection.Prepare("SELECT id, password FROM user WHERE username = ? OR password = ? LIMIT 1;")
 
 	if err != nil {
 		fmt.Println(err)
@@ -69,10 +68,10 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 	}
 
 	if rows.Next() {
-		var uuidString string
+		var id int64
 		var passwordHash string
 
-		err = rows.Scan(&uuidString, &passwordHash)
+		err = rows.Scan(&id, &passwordHash)
 
 		if !CheckPasswordHash(password, passwordHash) {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -80,7 +79,7 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 		}
 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"uuid": uuidString,
+			"id":   id,
 			"time": time.Now().Unix(),
 		})
 
@@ -108,6 +107,22 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusNotFound)
 	return
 
+}
+
+func (i Instance) CheckRequest(r *http.Request) (bool, int64) {
+	cookie, err := r.Cookie("Authorization")
+
+	if err != nil {
+		return false, 0
+	}
+
+	uuid, err := GetJwtContent(cookie.Value, i.JWTBase)
+
+	if err != nil {
+		return false, 0
+	}
+
+	return true, uuid
 }
 
 func CheckPasswordHash(password, hash string) bool {
