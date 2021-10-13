@@ -42,8 +42,6 @@ func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 	http.SetCookie(w, &http.Cookie{
 		Name:  "Authorization",
 		Value: jw,
-
-		Secure: true,
 	})
 }
 
@@ -93,8 +91,6 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 		http.SetCookie(w, &http.Cookie{
 			Name:  "Authorization",
 			Value: signed,
-
-			Secure: true,
 		})
 		if err != nil {
 			fmt.Println(err)
