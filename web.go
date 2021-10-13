@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func (i Instance) handlePostRegisterRequest(w http.ResponseWriter, r *http.Request) {
+func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Request) {
 	username := r.PostFormValue("username")
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
@@ -46,7 +46,7 @@ func (i Instance) handlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 	})
 }
 
-func (i Instance) handlePostLoginRequest(w http.ResponseWriter, r *http.Request) {
+func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request) {
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
 
