@@ -6,7 +6,7 @@ import (
 )
 
 type NormalClaims struct {
-	Uuid int64 `json:"uuid"`
+	Uuid int64 `json:"id"`
 	Time int64 `json:"time"`
 	jwt.RegisteredClaims
 }
