@@ -1,4 +1,4 @@
-module github.com/jaapieaapie1/accountFramework
+module github.com/jaapieaapie1/accountframework
 
 go 1.17
 
