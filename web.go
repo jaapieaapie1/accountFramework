@@ -98,6 +98,7 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 			w.WriteHeader(500)
 			return
 		}
+		return
 	}
 
 	w.WriteHeader(http.StatusNotFound)
