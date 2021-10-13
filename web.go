@@ -41,8 +41,10 @@ func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name: "Authorization",
+		Name:  "Authorization",
 		Value: jw,
+
+		Secure: true,
 	})
 }
 
@@ -78,7 +80,7 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 		}
 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"uuid" : uuidString,
+			"uuid": uuidString,
 			"time": time.Now().Unix(),
 		})
 
@@ -90,8 +92,10 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 		}
 
 		http.SetCookie(w, &http.Cookie{
-			Name: "Authorization",
+			Name:  "Authorization",
 			Value: signed,
+
+			Secure: true,
 		})
 		if err != nil {
 			fmt.Println(err)
