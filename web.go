@@ -40,7 +40,7 @@ func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	r.AddCookie(&http.Cookie{
+	http.SetCookie(w, &http.Cookie{
 		Name: "Authorization",
 		Value: jw,
 	})
@@ -89,7 +89,7 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		r.AddCookie(&http.Cookie{
+		http.SetCookie(w, &http.Cookie{
 			Name: "Authorization",
 			Value: signed,
 		})
