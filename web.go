@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Request) {
+func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Request, callback func(registered bool, w http.ResponseWriter, r *http.Request)) {
 	username := r.PostFormValue("username")
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
@@ -20,14 +20,14 @@ func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		fmt.Println(err)
-		w.WriteHeader(500)
+		callback(false, w, r)
 		return
 	}
 
 	_, err = stmt.Exec(u, username, email, hash)
 	if err != nil {
 		fmt.Println(err)
-		w.WriteHeader(500)
+		callback(false, w, r)
 		return
 	}
 
@@ -43,9 +43,11 @@ func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 		Name:  "Authorization",
 		Value: jw,
 	})
+	callback(true, w, r)
+
 }
 
-func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request) {
+func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request, callback func(loggedIn bool, w http.ResponseWriter, r *http.Request)) {
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
 
@@ -72,7 +74,7 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 		err = rows.Scan(&id, &passwordHash)
 
 		if !CheckPasswordHash(password, passwordHash) {
-			w.WriteHeader(http.StatusUnauthorized)
+			callback(false, w, r)
 			return
 		}
 
@@ -97,10 +99,12 @@ func (i Instance) HandlePostLoginRequest(w http.ResponseWriter, r *http.Request)
 			w.WriteHeader(500)
 			return
 		}
+		callback(true, w, r)
+
 		return
 	}
 
-	w.WriteHeader(http.StatusNotFound)
+	callback(false, w, r)
 	return
 
 }
