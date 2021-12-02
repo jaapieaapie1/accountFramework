@@ -37,7 +37,7 @@ func (i *Instance) PrepareDatabase() error {
     id       BIGINT SIGNED
         primary key,
     username varchar(16) null,
-    email    text        null,
+    email    varchar(255)        null,
     password text        not null,
     constraint user_email_uindex
         unique (email) using hash,
