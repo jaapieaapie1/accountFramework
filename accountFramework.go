@@ -8,7 +8,7 @@ import (
 type Instance struct {
 	DBConnection  *sql.DB
 	JWTBase       []byte
-	snowFlakeNode *snowflake.Node
+	SnowFlakeNode *snowflake.Node
 }
 
 func NewInstance(dbConn *sql.DB, encryptionBase string, nodeId int64) (*Instance, error) {
@@ -21,7 +21,7 @@ func NewInstance(dbConn *sql.DB, encryptionBase string, nodeId int64) (*Instance
 	instance := &Instance{
 		DBConnection:  dbConn,
 		JWTBase:       []byte(encryptionBase),
-		snowFlakeNode: node,
+		SnowFlakeNode: node,
 	}
 	err = instance.PrepareDatabase()
 	if err != nil {

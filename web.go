@@ -13,7 +13,7 @@ func (i Instance) HandlePostRegisterRequest(w http.ResponseWriter, r *http.Reque
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
 
-	u := i.snowFlakeNode.Generate()
+	u := i.SnowFlakeNode.Generate()
 
 	stmt, err := i.DBConnection.Prepare("INSERT INTO user (id, username, email, password) VALUES (?, ?, ?, ?);")
 
